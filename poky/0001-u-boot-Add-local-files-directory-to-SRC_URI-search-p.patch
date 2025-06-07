@@ -1,0 +1,65 @@
+From 093def5f59836a577051136851ab8aa8a3a8bd23 Mon Sep 17 00:00:00 2001
+From: Xavier Roumegue <xroumegue@gmail.com>
+Date: Sat, 7 Jun 2025 09:32:35 +0200
+Subject: [PATCH] u-boot: Add local files directory to SRC_URI search paths
+
+This fixes as described in [1] the following error:
+--- Error summary ---
+ERROR: /builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot_2023.07.02.bb: Unable to get checksum for u-boot SRC_URI entry disable-CONFIG_BLOBLIST.cfg: file could not be found
+The following paths were searched:
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot/poky/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm/recipes-bsp/u-boot/u-boot/poky/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot-2023.07.02/poky/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot/poky/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/files/poky/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot/genericarm64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm/recipes-bsp/u-boot/u-boot/genericarm64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot-2023.07.02/genericarm64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot/genericarm64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/files/genericarm64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot/armv8a/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm/recipes-bsp/u-boot/u-boot/armv8a/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot-2023.07.02/armv8a/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot/armv8a/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/files/armv8a/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot/aarch64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm/recipes-bsp/u-boot/u-boot/aarch64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot-2023.07.02/aarch64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot/aarch64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/files/aarch64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot/aarch64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm/recipes-bsp/u-boot/u-boot/aarch64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot-2023.07.02/aarch64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot/aarch64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/files/aarch64/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm/recipes-bsp/u-boot/u-boot/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot-2023.07.02/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/u-boot/disable-CONFIG_BLOBLIST.cfg
+/builds/jonmason00/meta-arm/work/build/../../meta-arm-bsp/recipes-bsp/u-boot/files/disable-CONFIG_BLOBLIST.cfg
+ERROR: Parsing halted due to errors, see error messages above
+
+[1] https://docs.yoctoproject.org/dev-manual/layers.html#appending-other-layers-metadata-with-your-layer
+
+Fixes: 953cb7b0c2 ("u-boot: disable CONFIG_BLOBLIST on genericarm64 and qemuarm64")
+
+Signed-off-by: Xavier Roumegue <xroumegue@gmail.com>
+---
+ meta/recipes-bsp/u-boot/u-boot-common.inc | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/meta/recipes-bsp/u-boot/u-boot-common.inc b/meta/recipes-bsp/u-boot/u-boot-common.inc
+index 6cd9c39430..ff09edf087 100644
+--- a/meta/recipes-bsp/u-boot/u-boot-common.inc
++++ b/meta/recipes-bsp/u-boot/u-boot-common.inc
+@@ -17,6 +17,7 @@ SRCREV = "34820924edbc4ec7803eb89d9852f4b870fa760a"
+ SRC_URI = "git://source.denx.de/u-boot/u-boot.git;protocol=https;branch=master;tag=v${PV}"
+ 
+ # workarounds for aarch64 kvm qemu boot regressions
++FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+ SRC_URI:append:qemuarm64 = " file://disable-CONFIG_BLOBLIST.cfg file://disable_CONFIG_USB.cfg"
+ SRC_URI:append:genericarm64 = " file://disable-CONFIG_BLOBLIST.cfg file://disable_CONFIG_USB.cfg"
+ 
+-- 
+2.49.0
+
