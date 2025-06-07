@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+
+header:
+  version: 14
+
+repos:
+  poky:
+    patches:
+      plain:  
+        repo: meta-patches
+        path: poky/0001-u-boot-Add-local-files-directory-to-SRC_URI-search-p.patch
+
