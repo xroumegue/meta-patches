@@ -3,3 +3,9 @@
 header:
   version: 14
 
+repos:
+  meta-openembedded:
+    patches:
+      plain:
+        repo: meta-patches
+        path: meta-openembedded/0001-suitesparse-Update-after-toolchain-selection-changes.patch
