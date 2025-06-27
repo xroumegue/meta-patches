@@ -1,0 +1,61 @@
+From 70d88c7ba820a59f4f0a27bdb4f4e9d0cec09059 Mon Sep 17 00:00:00 2001
+From: Antoine Bouyer <antoine.bouyer@nxp.com>
+Date: Fri, 27 Jun 2025 11:10:41 +0200
+Subject: [PATCH 2/2] gator-daemon: Update working folders
+
+This is new requirement after below poky change:
+      https://git.yoctoproject.org/poky/commit/?id=4dd321f8b83afecd962393101b2a6861275b5265
+
+Signed-off-by: Antoine Bouyer <antoine.bouyer@nxp.com>
+---
+ .../gator-daemon/gator-daemon_7.8.0.bb        | 23 +++++++++++--------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
+
+diff --git a/meta-arm/recipes-devtools/gator-daemon/gator-daemon_7.8.0.bb b/meta-arm/recipes-devtools/gator-daemon/gator-daemon_7.8.0.bb
+index 6188b07e84f1..d74205d96277 100644
+--- a/meta-arm/recipes-devtools/gator-daemon/gator-daemon_7.8.0.bb
++++ b/meta-arm/recipes-devtools/gator-daemon/gator-daemon_7.8.0.bb
+@@ -9,27 +9,30 @@ HOMEPAGE = "https://github.com/ARM-software/gator"
+ # https://github.com/ARM-software/gator#kernel-configuration
+ 
+ LICENSE = "GPL-2.0-only & LGPL-2.1-or-later & Apache-2.0"
+-LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263 \
+-                    file://libsensors/COPYING.LGPL;md5=4fbd65380cdd255951079008b364516c \
+-                    file://mxml/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
+-                    file://k/perf_event.h;endline=14;md5=e548bf30a60b2ed11ef2dcf7bfdac230 \
++LIC_FILES_CHKSUM = "file://daemon/COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263 \
++                    file://daemon/libsensors/COPYING.LGPL;md5=4fbd65380cdd255951079008b364516c \
++                    file://daemon/mxml/LICENSE;md5=86d3f3a95c324c9479bd8986968f4327 \
++                    file://daemon/k/perf_event.h;endline=14;md5=e548bf30a60b2ed11ef2dcf7bfdac230 \
+                    "
+ 
+ SRCREV = "6a944e7ee1f1c3ab9b2a57efd24c58503122db02"
+-SRC_URI = "git://github.com/ARM-software/gator.git;protocol=http;branch=main;protocol=https \
+-           file://0001-daemon-mxml-Define-_GNU_SOURCE.patch;striplevel=2 \
+-           file://0001-Include-missing-cstdint.patch;striplevel=2 \
++SRC_URI = "git://github.com/ARM-software/gator.git;branch=main;protocol=https \
++           file://0001-daemon-mxml-Define-_GNU_SOURCE.patch\
++           file://0001-Include-missing-cstdint.patch \
+           "
+ 
+-S = "${WORKDIR}/git/daemon"
+-
+ COMPATIBLE_HOST = "aarch64.*-linux"
+ 
+ EXTRA_OEMAKE = "'CFLAGS=${CFLAGS} ${TARGET_CC_ARCH} -D_DEFAULT_SOURCE -DETCDIR=\"${sysconfdir}\"' \
+                 'LDFLAGS=${LDFLAGS} ${TARGET_CC_ARCH}' 'CROSS_COMPILE=${TARGET_PREFIX}' \
+                 'CXXFLAGS=${CXXFLAGS} ${TARGET_CC_ARCH} -fno-rtti' CC='${CC}' CXX='${CXX}' V=1"
+ 
++do_compile() {
++        cd ${S}/daemon
++        oe_runmake
++}
++
+ do_install() {
+         install -d ${D}${sbindir}
+-        install -m 0755 ${S}/gatord ${D}${sbindir}/gatord
++        install -m 0755 ${S}/daemon/gatord ${D}${sbindir}/gatord
+ }
+-- 
+2.34.1
+
