@@ -6,9 +6,8 @@ header:
 repos:
   meta-arm:
     patches:
-      arm-opencsd:
+      plain:
         repo: meta-patches
-        path: arm/0001-devtools-opencsd-Remove-WORKDIR-usage.patch
-      arm-gatord:
-        repo: meta-patches
-        path: arm/0002-gator-daemon-Update-working-folders.patch
+        path: |
+          arm/0001-devtools-opencsd-Remove-WORKDIR-usage.patch
+          arm/0002-gator-daemon-Update-working-folders.patch
